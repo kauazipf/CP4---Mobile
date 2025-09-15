@@ -42,7 +42,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push("./index"); // ← Acesso direto, sem verificar email
+      router.push("/"); // ✅ Corrigido: use "/" ao invés de "/index"
     } catch (error: any) {
       const message =
         error?.code === "auth/user-not-found"
