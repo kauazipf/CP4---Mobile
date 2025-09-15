@@ -4,11 +4,11 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 
 export default function RootLayout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true); 
-  // 🔑 depois integramos com Firebase Auth
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  // 🔑 mais tarde vamos trocar por Firebase Auth
 
   if (!isLoggedIn) {
-    // Se o usuário não estiver logado → mostra fluxo de autenticação
+    // Usuário não logado → fluxo de autenticação
     return (
       <Stack screenOptions={{ headerShown: true }}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
@@ -18,7 +18,7 @@ export default function RootLayout() {
     );
   }
 
-  // Se o usuário estiver logado → mostra Drawer
+  // Usuário logado → Drawer Navigation
   return (
     <Drawer
       screenOptions={{
