@@ -81,7 +81,7 @@ export default function BookDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{book.title}</Text>
+      <Text style={styles.title}> Pagina do Livro </Text>
       <Text style={styles.author}>por {book.author}</Text>
       <Text style={styles.genre}>Gênero: {book.genre}</Text>
       {book.pages && <Text style={styles.pages}>{book.pages} páginas</Text>}

@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 20,
+    top: 160,
   },
   card: {
     flex: 1,
@@ -145,6 +146,7 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     backgroundColor: "#1a1a2e",
+    top: 330,
     padding: 20,
     borderRadius: 16,
     borderWidth: 1,
