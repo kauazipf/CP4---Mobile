@@ -1,42 +1,36 @@
 import { Drawer } from "expo-router/drawer";
+import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
-
-type IconProps = {
-  color: string;
-  size: number;
-};
+import { useState } from "react";
 
 export default function RootLayout() {
-  const navigation = useNavigation();
+  const [isLoggedIn, setIsLoggedIn] = useState(true); 
+  // 🔑 depois integramos com Firebase Auth
 
-  const headerLeft = () => (
-    <TouchableOpacity
-      style={{ marginLeft: 15 }}
-      onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-    >
-      <Ionicons name="menu-outline" size={28} color="#fff" />
-    </TouchableOpacity>
-  );
+  if (!isLoggedIn) {
+    // Se o usuário não estiver logado → mostra fluxo de autenticação
+    return (
+      <Stack screenOptions={{ headerShown: true }}>
+        <Stack.Screen name="login" options={{ title: "Login" }} />
+        <Stack.Screen name="register" options={{ title: "Cadastro" }} />
+        <Stack.Screen name="reset-password" options={{ title: "Recuperar Senha" }} />
+      </Stack>
+    );
+  }
 
+  // Se o usuário estiver logado → mostra Drawer
   return (
     <Drawer
       screenOptions={{
         headerShown: true,
         drawerActiveTintColor: "#6200ee",
-        drawerLabelStyle: { fontSize: 16 },
-        drawerStyle: { backgroundColor: "#f2f2f2", width: 240 },
-        headerStyle: { backgroundColor: "#6200ee" },
-        headerTintColor: "#fff",
-        headerLeft, // adiciona o botão de menu em todas as telas
       }}
     >
       <Drawer.Screen
         name="index"
         options={{
           title: "Início",
-          drawerIcon: ({ color, size }: IconProps) => (
+          drawerIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
@@ -45,7 +39,7 @@ export default function RootLayout() {
         name="books/index"
         options={{
           title: "Meus Livros",
-          drawerIcon: ({ color, size }: IconProps) => (
+          drawerIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
@@ -54,7 +48,7 @@ export default function RootLayout() {
         name="favorites"
         options={{
           title: "Favoritos",
-          drawerIcon: ({ color, size }: IconProps) => (
+          drawerIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size} color={color} />
           ),
         }}
@@ -63,7 +57,7 @@ export default function RootLayout() {
         name="profile"
         options={{
           title: "Perfil",
-          drawerIcon: ({ color, size }: IconProps) => (
+          drawerIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
