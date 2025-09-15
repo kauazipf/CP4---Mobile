@@ -122,12 +122,15 @@ export default function ProfileScreen() {
 
       {/* Ações */}
       <View style={styles.section}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => router.push("./edit-profile")}
+        >
           <Ionicons name="pencil-outline" size={20} color="#6200ee" />
           <Text style={styles.actionText}>✏️ Editar Perfil</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout}>
+        <TouchableOpacity style={[styles.actionButton, styles.logoutButton]} onPress={handleLogout} >
           <Ionicons name="log-out-outline" size={20} color="#ff3b30" />
           <Text style={[styles.actionText, styles.logoutText]}>🚪 Sair da Conta</Text>
         </TouchableOpacity>

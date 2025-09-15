@@ -2,6 +2,9 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { auth } from "./../services/firebaseConfig";
+import { db } from "./../services/firebaseConfig";
 
 export default function AddBookScreen() {
   const [title, setTitle] = useState("");
@@ -11,19 +14,34 @@ export default function AddBookScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleAddBook = () => {
+  const handleAddBook = async () => {
     if (!title || !author) {
       Alert.alert("Atenção", "Título e autor são obrigatórios.");
       return;
     }
 
     setLoading(true);
-    // Aqui você salvaria no Firestore
-    setTimeout(() => {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("Usuário não autenticado.");
+
+      await addDoc(collection(db, "books"), {
+        userId: user.uid,
+        title,
+        author,
+        genre,
+        status,
+        favorite: false, // padrão
+        createdAt: serverTimestamp(),
+      });
+
       Alert.alert("Sucesso", "Livro adicionado!");
+      router.back(); // ← Volta para a lista, que já está escutando mudanças com onSnapshot
+    } catch (error: any) {
+      Alert.alert("Erro", error.message);
+    } finally {
       setLoading(false);
-      router.back(); // Volta para a lista
-    }, 1000);
+    }
   };
 
   return (

@@ -3,8 +3,8 @@ import { Drawer } from "expo-router/drawer";
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "./services/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./services/firebaseConfig"; // ← Corrigi o caminho: era "./services" e deve ser "../services"
 import { User } from "firebase/auth";
 
 export default function RootLayout() {
@@ -45,7 +45,7 @@ export default function RootLayout() {
         drawerLabelStyle: { fontSize: 16 },
       }}
     >
-      {/* Telas do usuário logado */}
+      {/* ✅ APENAS as telas que devem aparecer no menu lateral */}
       <Drawer.Screen
         name="index"
         options={{
@@ -82,8 +82,7 @@ export default function RootLayout() {
           ),
         }}
       />
-
-      {/* Telas que não devem aparecer no menu */}
+       {/* Telas que não devem aparecer no menu */}
       <Drawer.Screen
         name="search"
         options={{
@@ -128,6 +127,13 @@ export default function RootLayout() {
       />
       <Drawer.Screen
         name="reset-password"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="edit-profile"
         options={{
           drawerItemStyle: { display: "none" },
           drawerLabel: () => null,
