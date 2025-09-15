@@ -1,46 +1,82 @@
 // app/edit/[id].tsx
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // ✅ getDoc importado aqui
+import { db } from "../services/firebaseConfig";
 
 export default function EditBookScreen() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
   const [status, setStatus] = useState("Quero ler");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  // Simular carregamento dos dados do livro
+  // ✅ Carrega dados do livro
   useEffect(() => {
-    // Aqui você buscaria no Firestore pelo ID
-    const mockBook = {
-      title: "Livro Exemplo",
-      author: "Autor Exemplo",
-      genre: "Ficção",
-      status: "Lendo",
+    if (!id) return;
+
+    const loadBook = async () => {
+      try {
+        const bookRef = doc(db, "books", id);
+        const bookSnap = await getDoc(bookRef); // ✅ Correção: getDoc(bookRef)
+        if (bookSnap.exists()) {
+          const bookData = bookSnap.data();
+          setTitle(bookData.title || "");
+          setAuthor(bookData.author || "");
+          setGenre(bookData.genre || "");
+          setStatus(bookData.status || "Quero ler");
+        } else {
+          Alert.alert("Erro", "Livro não encontrado.");
+          router.back();
+        }
+      } catch (error) {
+        console.error("Erro ao carregar livro:", error);
+        Alert.alert("Erro", "Não foi possível carregar os dados do livro.");
+      } finally {
+        setLoading(false);
+      }
     };
-    setTitle(mockBook.title);
-    setAuthor(mockBook.author);
-    setGenre(mockBook.genre);
-    setStatus(mockBook.status);
+
+    loadBook();
   }, [id]);
 
-  const handleUpdateBook = () => {
+  const handleUpdateBook = async () => {
     if (!title || !author) {
       Alert.alert("Atenção", "Título e autor são obrigatórios.");
       return;
     }
 
-    setLoading(true);
-    // Aqui você atualizaria no Firestore
-    setTimeout(() => {
+    setSaving(true);
+    try {
+      const bookRef = doc(db, "books", id);
+      await updateDoc(bookRef, {
+        title,
+        author,
+        genre,
+        status,
+        updatedAt: new Date(),
+      });
       Alert.alert("Sucesso", "Livro atualizado!");
-      setLoading(false);
       router.back();
-    }, 1000);
+    } catch (error: any) {
+      Alert.alert("Erro", error.message);
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6200ee" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -91,19 +127,18 @@ export default function EditBookScreen() {
       </View>
 
       <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
+        style={[styles.button, saving && styles.buttonDisabled]}
         onPress={handleUpdateBook}
-        disabled={loading}
+        disabled={saving}
       >
         <Text style={styles.buttonText}>
-          {loading ? "Atualizando..." : "Atualizar Livro"}
+          {saving ? "Atualizando..." : "Atualizar Livro"}
         </Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-// Estilos reutilizam os mesmos do AddBookScreen — você pode importar de um arquivo styles.ts
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#fff" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 24, color: "#333" },
@@ -145,5 +180,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
