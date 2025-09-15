@@ -1,16 +1,24 @@
 // app/profile.tsx
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useEffect, useState } from "react";
 import { useRouter, useNavigation } from "expo-router";
 import { signOut } from "firebase/auth";
 import { auth } from "./services/firebaseConfig";
-import { User } from "firebase/auth";
+import { collection, query, where, getDocs, onSnapshot } from "firebase/firestore";
+import { db } from "./services/firebaseConfig"; // ← Certifique-se de exportar `db` também
 
 export default function ProfileScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const user = auth.currentUser; // 👈 Obtém dados do usuário logado
+  const user = auth.currentUser;
+
+  const [stats, setStats] = useState({
+    total: 0,
+    read: 0,
+    favorites: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
   // ✅ Configura header com ícone de busca
   useLayoutEffect(() => {
@@ -36,6 +44,34 @@ export default function ProfileScreen() {
     }
   };
 
+  // ✅ Busca estatísticas em tempo real do Firestore
+  useEffect(() => {
+    if (!user) return;
+
+    setLoading(true);
+
+    // Cria query para buscar livros do usuário
+    const booksRef = collection(db, "books");
+    const q = query(booksRef, where("userId", "==", user.uid));
+
+    // Usa onSnapshot para atualizar em tempo real
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let total = 0, read = 0, favorites = 0;
+
+      snapshot.forEach((doc) => {
+        const book = doc.data();
+        total++;
+        if (book.status === "Lido") read++;
+        if (book.favorite) favorites++;
+      });
+
+      setStats({ total, read, favorites });
+      setLoading(false);
+    });
+
+    return () => unsubscribe(); // Limpa listener ao desmontar
+  }, [user]);
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -60,23 +96,28 @@ export default function ProfileScreen() {
       {/* Estatísticas */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>📊 Minhas Estatísticas</Text>
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Ionicons name="book-outline" size={24} color="#6200ee" />
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Total de Livros</Text>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#6200ee" style={{ marginVertical: 20 }} />
+        ) : (
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Ionicons name="book-outline" size={24} color="#6200ee" />
+              <Text style={styles.statNumber}>{stats.total}</Text>
+              <Text style={styles.statLabel}>Total de Livros</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Ionicons name="checkmark-circle-outline" size={24} color="#4caf50" />
+              <Text style={styles.statNumber}>{stats.read}</Text>
+              <Text style={styles.statLabel}>Livros Lidos</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Ionicons name="heart-outline" size={24} color="#e91e63" />
+              <Text style={styles.statNumber}>{stats.favorites}</Text>
+              <Text style={styles.statLabel}>Favoritos</Text>
+            </View>
           </View>
-          <View style={styles.statCard}>
-            <Ionicons name="checkmark-circle-outline" size={24} color="#4caf50" />
-            <Text style={styles.statNumber}>5</Text>
-            <Text style={styles.statLabel}>Livros Lidos</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Ionicons name="heart-outline" size={24} color="#e91e63" />
-            <Text style={styles.statNumber}>3</Text>
-            <Text style={styles.statLabel}>Favoritos</Text>
-          </View>
-        </View>
+        )}
       </View>
 
       {/* Ações */}
