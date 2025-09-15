@@ -132,7 +132,7 @@ Desenvolvido por:
 **Caetano Matos Penafiel  -  RM557984**  
 **Victor Egidio Lira  -  556653**  
 **Jennifer Kaori Suzuki - RM554661**  
-**Felipe Fidelix -  RM558957**  
+**Felipe Fidelix -  RM556426**  
 
 Disciplina: **Mobile Application Development - FIAP**  
 Entrega: **CP4**
