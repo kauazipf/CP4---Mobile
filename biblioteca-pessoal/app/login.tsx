@@ -1,19 +1,21 @@
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./services/firebaseConfig";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleLogin = () => {
-    // 🔑 Aqui entrará a validação com Firebase Auth
-    if (email && password) {
-      console.log("Login bem-sucedido:", email);
-      router.replace("/"); // Redireciona para Home (index.tsx)
-    } else {
-      alert("Preencha todos os campos!");
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      console.log("Login OK:", email);
+      router.replace("/"); // vai para Home
+    } catch (error: any) {
+      alert("Erro no login: " + error.message);
     }
   };
 
@@ -43,11 +45,5 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", padding: 20 },
   title: { fontSize: 26, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginBottom: 12,
-    borderRadius: 8,
-  },
+  input: { borderWidth: 1, borderColor: "#ccc", padding: 10, marginBottom: 12, borderRadius: 8 },
 });

@@ -1,14 +1,30 @@
 import { Drawer } from "expo-router/drawer";
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./services/firebaseConfig";
+import { User } from "firebase/auth";
 
 export default function RootLayout() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
-  // 🔑 mais tarde vamos trocar por Firebase Auth
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoggedIn) {
-    // Usuário não logado → fluxo de autenticação
+  // 🔑 Monitora o login automaticamente
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  if (loading) {
+    return null; // você pode trocar por uma tela de Splash/Loading
+  }
+
+  if (!user) {
+    // Usuário NÃO logado → fluxo de autenticação
     return (
       <Stack screenOptions={{ headerShown: true }}>
         <Stack.Screen name="login" options={{ title: "Login" }} />
