@@ -1,50 +1,128 @@
-# Welcome to your Expo app 👋
+# 📚 Biblioteca Pessoal - CP4 Mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile desenvolvido em **React Native** com integração ao **Firebase**, como parte da avaliação prática (CP4).  
+O sistema permite gerenciar uma biblioteca pessoal, com autenticação de usuários, cadastro e organização de livros.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Funcionalidades
 
-   ```bash
-   npm install
-   ```
+- **Autenticação Firebase**
+  - Cadastro, login, logout e recuperação de senha
+  - Validação de campos e feedback visual
 
-2. Start the app
+- **Gerenciamento de Livros (CRUD - Firestore)**
+  - Adicionar, visualizar, editar e excluir livros
+  - Confirmação antes da exclusão
+  - Atualização em tempo real
 
-   ```bash
-   npx expo start
-   ```
+- **Busca e Organização**
+  - Pesquisa por título ou autor
+  - Filtros por gênero literário e status de leitura
+  - Ordenação por data ou ordem alfabética
+  - Sistema de favoritos
 
-In the output, you'll find options to open the app in a
+- **Interface e Navegação**
+  - Navegação por **Stack** e **Tabs**
+  - Telas condicionais (usuário logado/não logado)
+  - Layout responsivo e consistente
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Perfil do Usuário**
+  - Exibição e edição de dados básicos
+  - Estatísticas de leitura (livros cadastrados, lidos, etc.)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🛠️ Tecnologias Utilizadas
 
-When you're ready, run:
+- [React Native](https://reactnative.dev/) (Expo ou CLI)
+- [Firebase Authentication](https://firebase.google.com/docs/auth)
+- [Firebase Firestore](https://firebase.google.com/docs/firestore)
+- [React Navigation v6](https://reactnavigation.org/)
+- [Context API](https://reactjs.org/docs/context.html) para gerenciamento de estado
+- UI: **Native Base / Styled Components / React Native Elements**
+- Ícones: **react-native-vector-icons**
 
-```bash
-npm run reset-project
+---
+
+## 📂 Estrutura do Projeto
+
+```
+/src
+  /components   → Botões, inputs, cards reutilizáveis
+  /screens      → Telas principais (Login, Register, Home, AddBook, BookDetail, EditBook, Favorites, Profile, Search)
+  /services     → Integração com Firebase
+  /context      → Estado global (AuthContext)
+  /navigation   → Configuração do React Navigation
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## ⚙️ Configuração e Execução
 
-To learn more about developing your project with Expo, look at the following resources:
+### 1. Clonar o repositório
+```bash
+git clone https://github.com/SEU-USUARIO/CP4-Mobile.git
+cd CP4-Mobile
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Instalar dependências
+```bash
+npm install
+# ou
+yarn install
+```
 
-## Join the community
+### 3. Configurar Firebase
+- Crie um projeto no [Firebase Console](https://console.firebase.google.com/)
+- Ative **Authentication** (Email/Senha) e **Firestore Database**
+- Configure os arquivos `.env` com as chaves do seu app Firebase:
+```env
+API_KEY=xxxxxxxxxxxx
+AUTH_DOMAIN=xxxxxxxxxxxx
+PROJECT_ID=xxxxxxxxxxxx
+STORAGE_BUCKET=xxxxxxxxxxxx
+MESSAGING_SENDER_ID=xxxxxxxxxxxx
+APP_ID=xxxxxxxxxxxx
+```
 
-Join our community of developers creating universal apps.
+### 4. Rodar o app
+```bash
+npx expo start
+# ou, se usar React Native CLI:
+npx react-native run-android
+npx react-native run-ios
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 📱 Telas do Aplicativo
+
+- Login / Registro / Recuperação de Senha  
+- Home (listagem de livros)  
+- AddBook (adicionar livro)  
+- BookDetail (detalhes do livro)  
+- EditBook (editar livro)  
+- Search (busca e filtros)  
+- Favorites (livros favoritos)  
+- Profile (perfil do usuário)  
+
+---
+
+## ✅ Critérios Atendidos (PDF CP4)
+
+- [x] Setup e configuração com Firebase  
+- [x] Autenticação completa (login, registro, logout, recuperação de senha)  
+- [x] CRUD de livros no Firestore  
+- [x] Navegação stack + tabs  
+- [x] Busca, filtros e favoritos  
+- [x] Tela de perfil e estatísticas  
+- [x] Estrutura organizada, boas práticas e README documentado  
+
+---
+
+## 👤 Autor
+
+Desenvolvido por **[Seu Nome]**  
+Disciplina: **Mobile Application Development - FIAP**  
+Entrega: **CP4**
