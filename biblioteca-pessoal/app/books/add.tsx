@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { auth } from "./../services/firebaseConfig";
-import { db } from "./../services/firebaseConfig";
+import { auth } from "../services/firebaseConfig"; // ← Corrigi o caminho (era ./../)
+import { db } from "../services/firebaseConfig";
 
 export default function AddBookScreen() {
   const [title, setTitle] = useState("");
@@ -16,31 +16,39 @@ export default function AddBookScreen() {
   const router = useRouter();
 
   const handleAddBook = async () => {
-    if (!title || !author) {
+    // ✅ Validação inicial
+    if (!title.trim() || !author.trim()) {
       Alert.alert("Atenção", "Título e autor são obrigatórios.");
       return;
     }
 
-    setLoading(true);
-    try {
-      const user = auth.currentUser;
-      if (!user) throw new Error("Usuário não autenticado.");
+    // ✅ Verifica autenticação ANTES de setar loading
+    const user = auth.currentUser;
+    if (!user) {
+      Alert.alert("Erro", "Usuário não autenticado. Faça login novamente.");
+      return;
+    }
 
+    setLoading(true);
+
+    try {
       await addDoc(collection(db, "books"), {
         userId: user.uid,
-        title,
-        author,
-        genre,
+        title: title.trim(),
+        author: author.trim(),
+        genre: genre.trim(),
         status,
         favorite: false,
         createdAt: serverTimestamp(),
       });
 
-      Alert.alert("Sucesso", "Livro adicionado!");
+      Alert.alert("Sucesso", "Livro adicionado com sucesso!");
       router.back();
     } catch (error: any) {
-      Alert.alert("Erro", error.message);
+      console.error("Erro ao adicionar livro:", error);
+      Alert.alert("Erro", error.message || "Não foi possível adicionar o livro.");
     } finally {
+      // ✅ GARANTIDO: Sempre reseta o loading
       setLoading(false);
     }
   };
@@ -57,6 +65,7 @@ export default function AddBookScreen() {
           placeholderTextColor="#b0b0ff"
           value={title}
           onChangeText={setTitle}
+          autoCapitalize="sentences"
         />
       </View>
 
@@ -68,6 +77,7 @@ export default function AddBookScreen() {
           placeholderTextColor="#b0b0ff"
           value={author}
           onChangeText={setAuthor}
+          autoCapitalize="words"
         />
       </View>
 
@@ -79,6 +89,7 @@ export default function AddBookScreen() {
           placeholderTextColor="#b0b0ff"
           value={genre}
           onChangeText={setGenre}
+          autoCapitalize="words"
         />
       </View>
 
@@ -109,6 +120,7 @@ export default function AddBookScreen() {
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={handleAddBook}
         disabled={loading}
+        accessibilityLabel={loading ? "Salvando livro..." : "Salvar livro"}
       >
         <Text style={styles.buttonText}>
           {loading ? "Salvando..." : "Salvar Livro"}

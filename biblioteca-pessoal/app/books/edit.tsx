@@ -17,20 +17,30 @@ export default function EditBookScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // ✅ Carrega dados do livro
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      Alert.alert("Erro", "ID do livro não encontrado.");
+      router.back();
+      return;
+    }
 
     const loadBook = async () => {
       try {
         const bookRef = doc(db, "books", id);
         const bookSnap = await getDoc(bookRef);
-        if (bookSnap.exists()) {
-          const bookData = bookSnap.data();
-          setTitle(bookData.title || "");
-          setAuthor(bookData.author || "");
-          setGenre(bookData.genre || "");
-          setStatus(bookData.status || "Quero ler");
+        
+        if (!bookSnap.exists()) {
+          Alert.alert("Erro", "Livro não encontrado.");
+          router.back();
+          return;
         }
+
+        const bookData = bookSnap.data();
+        setTitle(bookData.title || "");
+        setAuthor(bookData.author || "");
+        setGenre(bookData.genre || "");
+        setStatus(bookData.status || "Quero ler");
       } catch (error) {
         console.error("Erro ao carregar livro:", error);
         Alert.alert("Erro", "Não foi possível carregar os dados do livro.");
@@ -42,26 +52,38 @@ export default function EditBookScreen() {
     loadBook();
   }, [id]);
 
-  const handleUpdateBook = async () => {
-    if (!title || !author) {
-      Alert.alert("Atenção", "Título e autor são obrigatórios.");
-      return;
+  // ✅ Validação dos campos
+  const validate = () => {
+    if (!title.trim()) {
+      Alert.alert("Atenção", "O título é obrigatório.");
+      return false;
     }
+    if (!author.trim()) {
+      Alert.alert("Atenção", "O autor é obrigatório.");
+      return false;
+    }
+    return true;
+  };
+
+  // ✅ Salva as alterações
+  const handleUpdateBook = async () => {
+    if (!validate()) return;
 
     setSaving(true);
     try {
       const bookRef = doc(db, "books", id);
       await updateDoc(bookRef, {
-        title,
-        author,
-        genre,
+        title: title.trim(),
+        author: author.trim(),
+        genre: genre.trim(),
         status,
         updatedAt: new Date(),
       });
-      Alert.alert("Sucesso", "Livro atualizado!");
-      router.back();
+
+      Alert.alert("Sucesso", "Livro atualizado com sucesso!");
+      router.back(); // ← Volta para a tela anterior (detalhes ou lista)
     } catch (error: any) {
-      Alert.alert("Erro", error.message);
+      Alert.alert("Erro", error.message || "Não foi possível atualizar o livro.");
     } finally {
       setSaving(false);
     }
@@ -71,13 +93,14 @@ export default function EditBookScreen() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#00d4ff" />
+        <Text style={styles.loadingText}>Carregando dados do livro...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Editar Livro</Text>
+      <Text style={styles.title}>✏️ Editar Livro</Text>
 
       <View style={styles.inputContainer}>
         <Ionicons name="book-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
@@ -207,5 +230,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#0f0f1a",
+  },
+  loadingText: {
+    color: "#b0b0ff",
+    marginTop: 16,
+    fontSize: 16,
   },
 });

@@ -94,6 +94,10 @@ npx react-native run-android
 npx react-native run-ios
 ```
 
+## Link do Video
+
+- https://www.youtube.com/watch?v=Hr_vGF8kMSw
+
 ---
 
 ## 📱 Telas do Aplicativo
@@ -123,6 +127,12 @@ npx react-native run-ios
 
 ## 👤 Autor
 
-Desenvolvido por **[Seu Nome]**  
+Desenvolvido por:
+**Kauã Fermino Zipf  -  RM558957**  
+**Caetano Matos Penafiel  -  RM557984**  
+**Victor Egidio Lira  -  556653**  
+**Jennifer Kaori Suzuki - RM554661**  
+**Felipe Fidelix -  RM558957**  
+
 Disciplina: **Mobile Application Development - FIAP**  
 Entrega: **CP4**
