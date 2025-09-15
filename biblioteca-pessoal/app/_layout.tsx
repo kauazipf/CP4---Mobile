@@ -27,9 +27,9 @@ export default function RootLayout() {
     // Usuário NÃO logado → fluxo de autenticação
     return (
       <Stack screenOptions={{ headerShown: true }}>
-        <Stack.Screen name="login" options={{ title: "Login" }} />
-        <Stack.Screen name="register" options={{ title: "Cadastro" }} />
-        <Stack.Screen name="reset-password" options={{ title: "Recuperar Senha" }} />
+        <Stack.Screen name="Login" options={{ title: "Login" }} />
+        <Stack.Screen name="Register" options={{ title: "Cadastro" }} />
+        <Stack.Screen name="Reset-password" options={{ title: "Recuperar Senha" }} />
       </Stack>
     );
   }
