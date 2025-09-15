@@ -1,3 +1,4 @@
+// app/_layout.tsx
 import { Drawer } from "expo-router/drawer";
 import { Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,16 +21,16 @@ export default function RootLayout() {
   }, []);
 
   if (loading) {
-    return null; // você pode trocar por uma tela de Splash/Loading
+    return null; // ou uma tela de loading
   }
 
   if (!user) {
     // Usuário NÃO logado → fluxo de autenticação
     return (
       <Stack screenOptions={{ headerShown: true }}>
-        <Stack.Screen name="Login" options={{ title: "Login" }} />
-        <Stack.Screen name="Register" options={{ title: "Cadastro" }} />
-        <Stack.Screen name="Reset-password" options={{ title: "Recuperar Senha" }} />
+        <Stack.Screen name="login" options={{ title: "Login" }} />
+        <Stack.Screen name="register" options={{ title: "Cadastro" }} />
+        <Stack.Screen name="reset-password" options={{ title: "Recuperar Senha" }} />
       </Stack>
     );
   }
@@ -40,8 +41,11 @@ export default function RootLayout() {
       screenOptions={{
         headerShown: true,
         drawerActiveTintColor: "#6200ee",
+        drawerInactiveTintColor: "#888",
+        drawerLabelStyle: { fontSize: 16 },
       }}
     >
+      {/* Telas do usuário logado */}
       <Drawer.Screen
         name="index"
         options={{
@@ -76,6 +80,57 @@ export default function RootLayout() {
           drawerIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
+        }}
+      />
+
+      {/* Telas que não devem aparecer no menu */}
+      <Drawer.Screen
+        name="search"
+        options={{
+          drawerItemStyle: { display: "none" }, // ← Oculta no menu
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="books/add"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="books/edit"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="books/[id]"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="login"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="register"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
+        }}
+      />
+      <Drawer.Screen
+        name="reset-password"
+        options={{
+          drawerItemStyle: { display: "none" },
+          drawerLabel: () => null,
         }}
       />
     </Drawer>
