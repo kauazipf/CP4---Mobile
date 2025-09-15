@@ -16,7 +16,6 @@ export default function BookListScreen() {
   const [books, setBooks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Configura header com ícone de busca
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -25,18 +24,16 @@ export default function BookListScreen() {
           style={{ marginRight: 16 }}
           accessibilityLabel="Buscar livros"
         >
-          <Ionicons name="search-outline" size={24} color="#6200ee" />
+          <Ionicons name="search-outline" size={24} color="#00d4ff" />
         </TouchableOpacity>
       ),
     });
   }, [navigation, router]);
 
-  // ✅ Busca livros do usuário em tempo real
   useEffect(() => {
     if (!user) return;
 
     setLoading(true);
-
     const booksRef = collection(db, "books");
     const q = query(booksRef, where("userId", "==", user.uid), orderBy("createdAt", "desc"));
 
@@ -77,7 +74,7 @@ export default function BookListScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#00d4ff" />
       </View>
     );
   }
@@ -114,45 +111,46 @@ export default function BookListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#0f0f1a" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    borderBottomColor: "#4a4a8a",
   },
-  title: { fontSize: 24, fontWeight: "bold", color: "#333" },
-  addButton: { fontSize: 18, color: "#6200ee", fontWeight: "600" },
+  title: { fontSize: 24, fontWeight: "bold", color: "#ffffff" },
+  addButton: { fontSize: 18, color: "#00d4ff", fontWeight: "600" },
   list: { padding: 20 },
   bookCard: {
     padding: 16,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#1a1a2e",
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: "#eee",
+    borderColor: "#4a4a8a",
     position: "relative",
   },
-  bookTitle: { fontSize: 18, fontWeight: "bold", color: "#333" },
-  bookAuthor: { fontSize: 14, color: "#666", marginTop: 4 },
-  bookGenre: { fontSize: 12, color: "#888", marginTop: 4 },
-  bookStatus: { fontSize: 12, fontWeight: "500", marginTop: 4 },
+  bookTitle: { fontSize: 18, fontWeight: "bold", color: "#ffffff" },
+  bookAuthor: { fontSize: 14, color: "#b0b0ff", marginTop: 4 },
+  bookGenre: { fontSize: 12, color: "#8888cc", marginTop: 4 },
+  bookStatus: { fontSize: 12, fontWeight: "500", marginTop: 4, color: "#b0b0ff" },
   statusLido: { color: "#4caf50" },
   statusLendo: { color: "#ff9800" },
-  statusQueroLer: { color: "#6200ee" },
+  statusQueroLer: { color: "#00d4ff" },
   favoriteIcon: {
     position: "absolute",
     top: 8,
     right: 8,
   },
   emptyContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
-  emptyText: { fontSize: 16, color: "#999", textAlign: "center" },
-  addText: { fontSize: 16, color: "#6200ee", fontWeight: "600", marginTop: 10 },
+  emptyText: { fontSize: 16, color: "#b0b0ff", textAlign: "center" },
+  addText: { fontSize: 16, color: "#00d4ff", fontWeight: "600", marginTop: 10 },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#0f0f1a",
   },
 });

@@ -2,8 +2,9 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { doc, getDoc, updateDoc } from "firebase/firestore"; // ✅ getDoc importado aqui
-import { db } from "../services/firebaseConfig";
+import { Ionicons } from "@expo/vector-icons";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "./../services/firebaseConfig";
 
 export default function EditBookScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -16,23 +17,19 @@ export default function EditBookScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // ✅ Carrega dados do livro
   useEffect(() => {
     if (!id) return;
 
     const loadBook = async () => {
       try {
         const bookRef = doc(db, "books", id);
-        const bookSnap = await getDoc(bookRef); // ✅ Correção: getDoc(bookRef)
+        const bookSnap = await getDoc(bookRef);
         if (bookSnap.exists()) {
           const bookData = bookSnap.data();
           setTitle(bookData.title || "");
           setAuthor(bookData.author || "");
           setGenre(bookData.genre || "");
           setStatus(bookData.status || "Quero ler");
-        } else {
-          Alert.alert("Erro", "Livro não encontrado.");
-          router.back();
         }
       } catch (error) {
         console.error("Erro ao carregar livro:", error);
@@ -73,7 +70,7 @@ export default function EditBookScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#00d4ff" />
       </View>
     );
   }
@@ -82,26 +79,38 @@ export default function EditBookScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Editar Livro</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Título do Livro *"
-        value={title}
-        onChangeText={setTitle}
-      />
+      <View style={styles.inputContainer}>
+        <Ionicons name="book-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Título do Livro *"
+          placeholderTextColor="#b0b0ff"
+          value={title}
+          onChangeText={setTitle}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Autor *"
-        value={author}
-        onChangeText={setAuthor}
-      />
+      <View style={styles.inputContainer}>
+        <Ionicons name="person-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Autor *"
+          placeholderTextColor="#b0b0ff"
+          value={author}
+          onChangeText={setAuthor}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Gênero"
-        value={genre}
-        onChangeText={setGenre}
-      />
+      <View style={styles.inputContainer}>
+        <Ionicons name="albums-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="Gênero"
+          placeholderTextColor="#b0b0ff"
+          value={genre}
+          onChangeText={setGenre}
+        />
+      </View>
 
       <View style={styles.statusContainer}>
         <Text style={styles.label}>Status:</Text>
@@ -140,44 +149,56 @@ export default function EditBookScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 24, color: "#333" },
-  input: {
+  container: { flex: 1, padding: 20, backgroundColor: "#0f0f1a" },
+  title: { fontSize: 24, fontWeight: "bold", marginBottom: 24, color: "#ffffff", textAlign: "center" },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1a1a2e",
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 16,
-    borderRadius: 12,
+    borderColor: "#4a4a8a",
+    borderRadius: 14,
+    paddingHorizontal: 16,
     marginBottom: 16,
+    height: 56,
+  },
+  inputIcon: {
+    marginRight: 12,
+  },
+  input: {
+    flex: 1,
     fontSize: 16,
+    color: "#ffffff",
+    padding: 0,
   },
   statusContainer: { marginBottom: 24 },
-  label: { fontSize: 16, fontWeight: "600", marginBottom: 8, color: "#333" },
+  label: { fontSize: 16, fontWeight: "600", marginBottom: 8, color: "#ffffff" },
   statusOption: {
     padding: 12,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#4a4a8a",
     borderRadius: 8,
     marginRight: 8,
     alignItems: "center",
   },
   statusOptionSelected: {
-    backgroundColor: "#6200ee",
-    borderColor: "#6200ee",
+    backgroundColor: "#6a5af9",
+    borderColor: "#6a5af9",
   },
-  statusText: { color: "#333" },
-  statusTextSelected: { color: "#fff", fontWeight: "600" },
+  statusText: { color: "#b0b0ff" },
+  statusTextSelected: { color: "#ffffff", fontWeight: "600" },
   button: {
-    backgroundColor: "#6200ee",
+    backgroundColor: "#6a5af9",
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
     marginTop: 20,
   },
   buttonDisabled: {
-    backgroundColor: "#a350ff",
+    backgroundColor: "#5247e0",
   },
   buttonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "600",
   },
@@ -185,5 +206,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#0f0f1a",
   },
 });

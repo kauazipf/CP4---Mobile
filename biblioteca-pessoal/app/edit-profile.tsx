@@ -18,7 +18,6 @@ export default function EditProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // ✅ Configura header com ícone de busca
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -27,13 +26,12 @@ export default function EditProfileScreen() {
           style={{ marginRight: 16 }}
           accessibilityLabel="Buscar livros"
         >
-          <Ionicons name="search-outline" size={24} color="#6200ee" />
+          <Ionicons name="search-outline" size={24} color="#00d4ff" />
         </TouchableOpacity>
       ),
     });
   }, [navigation, router]);
 
-  // ✅ Carrega dados do usuário
   useEffect(() => {
     if (user) {
       setDisplayName(user.displayName || "");
@@ -53,9 +51,8 @@ export default function EditProfileScreen() {
       await updateProfile(user!, {
         displayName: displayName.trim(),
       });
-
       Alert.alert("Sucesso", "Perfil atualizado com sucesso!");
-      router.back(); // Volta para a tela de perfil
+      router.back();
     } catch (error: any) {
       Alert.alert("Erro", error.message);
     } finally {
@@ -66,7 +63,7 @@ export default function EditProfileScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#00d4ff" />
       </View>
     );
   }
@@ -76,22 +73,24 @@ export default function EditProfileScreen() {
       <Text style={styles.title}>✏️ Editar Perfil</Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Nome Completo *</Text>
+        <Ionicons name="person-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
         <TextInput
           style={styles.input}
+          placeholder="Seu nome *"
+          placeholderTextColor="#b0b0ff"
           value={displayName}
           onChangeText={setDisplayName}
-          placeholder="Seu nome"
         />
       </View>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Email</Text>
+        <Ionicons name="mail-outline" size={20} color="#b0b0ff" style={styles.inputIcon} />
         <TextInput
           style={[styles.input, styles.inputDisabled]}
-          value={email}
-          editable={false} // Firebase não permite mudar email sem reautenticação
           placeholder="Email"
+          placeholderTextColor="#8888cc"
+          value={email}
+          editable={false}
         />
         <Text style={styles.hintText}>
           Para alterar o email, entre em contato com o suporte.
@@ -115,54 +114,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#0f0f1a",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: "#ffffff",
     marginBottom: 24,
     textAlign: "center",
   },
   inputContainer: {
-    marginBottom: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1a1a2e",
+    borderWidth: 1,
+    borderColor: "#4a4a8a",
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    height: 56,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 16,
-    borderRadius: 12,
+    flex: 1,
     fontSize: 16,
-    backgroundColor: "#fff",
+    color: "#ffffff",
+    padding: 0,
   },
   inputDisabled: {
-    backgroundColor: "#f0f0f0",
-    color: "#666",
+    color: "#8888cc",
   },
   hintText: {
     fontSize: 12,
-    color: "#888",
+    color: "#8888cc",
     marginTop: 8,
+    marginLeft: 12,
     fontStyle: "italic",
   },
   button: {
-    backgroundColor: "#6200ee",
+    backgroundColor: "#6a5af9",
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: "center",
     marginTop: 20,
   },
   buttonDisabled: {
-    backgroundColor: "#a350ff",
+    backgroundColor: "#5247e0",
   },
   buttonText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: 18,
     fontWeight: "600",
   },
@@ -170,5 +172,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#0f0f1a",
   },
 });

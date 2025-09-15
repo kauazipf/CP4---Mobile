@@ -4,7 +4,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useLayoutEffect, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "./../services/firebaseConfig";
 
 export default function BookDetailScreen() {
@@ -15,7 +15,6 @@ export default function BookDetailScreen() {
   const [book, setBook] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Configura header
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -24,29 +23,33 @@ export default function BookDetailScreen() {
           style={{ marginRight: 16 }}
           accessibilityLabel="Buscar livros"
         >
-          <Ionicons name="search-outline" size={24} color="#6200ee" />
+          <Ionicons name="search-outline" size={24} color="#00d4ff" />
         </TouchableOpacity>
       ),
     });
   }, [navigation, router]);
 
-  // ✅ Busca dados do livro em tempo real
   useEffect(() => {
     if (!id) return;
 
     setLoading(true);
-
-    const bookRef = doc(db, "books", id);
-    const unsubscribe = onSnapshot(bookRef, (doc) => {
-      if (doc.exists()) {
-        setBook({ id: doc.id, ...doc.data() });
-      } else {
-        setBook(null);
+    const loadBook = async () => {
+      try {
+        const bookRef = doc(db, "books", id);
+        const bookSnap = await getDoc(bookRef);
+        if (bookSnap.exists()) {
+          setBook({ id: bookSnap.id, ...bookSnap.data() });
+        } else {
+          setBook(null);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar livro:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    };
 
-    return () => unsubscribe();
+    loadBook();
   }, [id]);
 
   const handleEdit = () => {
@@ -57,14 +60,13 @@ export default function BookDetailScreen() {
   };
 
   const handleDelete = () => {
-    // TODO: Implementar exclusão com confirmação + Firestore
     alert("Funcionalidade de exclusão ainda não implementada.");
   };
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#6200ee" />
+        <ActivityIndicator size="large" color="#00d4ff" />
       </View>
     );
   }
@@ -104,7 +106,6 @@ export default function BookDetailScreen() {
         <TouchableOpacity
           style={[styles.button, styles.editButton]}
           onPress={handleEdit}
-          accessibilityLabel="Editar livro"
         >
           <Text style={styles.buttonText}>✏️ Editar</Text>
         </TouchableOpacity>
@@ -112,7 +113,6 @@ export default function BookDetailScreen() {
         <TouchableOpacity
           style={[styles.button, styles.deleteButton]}
           onPress={handleDelete}
-          accessibilityLabel="Excluir livro"
         >
           <Text style={styles.buttonText}>🗑️ Excluir</Text>
         </TouchableOpacity>
@@ -122,11 +122,12 @@ export default function BookDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
+  container: { flex: 1, padding: 20, backgroundColor: "#0f0f1a" },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#0f0f1a",
   },
   errorText: {
     textAlign: "center",
@@ -134,20 +135,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 50,
   },
-  title: { fontSize: 28, fontWeight: "bold", color: "#333", marginBottom: 8 },
-  author: { fontSize: 18, color: "#666", marginBottom: 8 },
-  genre: { fontSize: 16, color: "#888", marginBottom: 4 },
-  pages: { fontSize: 14, color: "#888", marginBottom: 4 },
-  status: { fontSize: 16, fontWeight: "600", marginBottom: 20 },
+  title: { fontSize: 28, fontWeight: "bold", color: "#ffffff", marginBottom: 8 },
+  author: { fontSize: 18, color: "#b0b0ff", marginBottom: 8 },
+  genre: { fontSize: 16, color: "#8888cc", marginBottom: 4 },
+  pages: { fontSize: 14, color: "#8888cc", marginBottom: 4 },
+  status: { fontSize: 16, fontWeight: "600", marginBottom: 20, color: "#b0b0ff" },
   statusLido: { color: "#4caf50" },
   statusLendo: { color: "#ff9800" },
-  statusQueroLer: { color: "#6200ee" },
-  divider: { height: 1, backgroundColor: "#eee", marginVertical: 20 },
-  summaryTitle: { fontSize: 18, fontWeight: "600", color: "#333", marginBottom: 8 },
-  summary: { fontSize: 14, color: "#555", lineHeight: 22 },
+  statusQueroLer: { color: "#00d4ff" },
+  divider: { height: 1, backgroundColor: "#4a4a8a", marginVertical: 20 },
+  summaryTitle: { fontSize: 18, fontWeight: "600", color: "#ffffff", marginBottom: 8 },
+  summary: { fontSize: 14, color: "#b0b0ff", lineHeight: 22 },
   buttonContainer: { flexDirection: "row", justifyContent: "space-between", marginTop: 40 },
   button: { padding: 16, borderRadius: 12, width: "48%", alignItems: "center" },
-  editButton: { backgroundColor: "#6200ee" },
+  editButton: { backgroundColor: "#6a5af9" },
   deleteButton: { backgroundColor: "#ff3b30" },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  buttonText: { color: "#ffffff", fontSize: 16, fontWeight: "600" },
 });

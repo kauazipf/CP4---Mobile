@@ -20,7 +20,6 @@ export default function HomeScreen() {
   });
   const [loading, setLoading] = useState(true);
 
-  // ✅ Configura o header com ícone de busca
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -29,31 +28,27 @@ export default function HomeScreen() {
           style={{ marginRight: 16 }}
           accessibilityLabel="Buscar livros"
         >
-          <Ionicons name="search-outline" size={24} color="#6200ee" />
+          <Ionicons name="search-outline" size={24} color="#00d4ff" />
         </TouchableOpacity>
       ),
     });
   }, [navigation, router]);
 
-  // ✅ Busca estatísticas em tempo real do Firestore
   useEffect(() => {
     if (!user) return;
 
     setLoading(true);
-
     const booksRef = collection(db, "books");
     const q = query(booksRef, where("userId", "==", user.uid));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       let total = 0, read = 0, favorites = 0;
-
       snapshot.forEach((doc) => {
         const book = doc.data();
         total++;
         if (book.status === "Lido") read++;
         if (book.favorite) favorites++;
       });
-
       setStats({ total, read, favorites });
       setLoading(false);
     });
@@ -68,12 +63,12 @@ export default function HomeScreen() {
 
       <View style={styles.row}>
         <TouchableOpacity style={styles.card} onPress={() => router.push("/books/add")}>
-          <Ionicons name="add-circle-outline" size={40} color="#6200ee" />
+          <Ionicons name="add-circle-outline" size={40} color="#00d4ff" />
           <Text style={styles.cardText}>Adicionar Livro</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.card} onPress={() => router.push("/books")}>
-          <Ionicons name="book-outline" size={40} color="#6200ee" />
+          <Ionicons name="book-outline" size={40} color="#00d4ff" />
           <Text style={styles.cardText}>Meus Livros</Text>
         </TouchableOpacity>
       </View>
@@ -91,10 +86,9 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.statsContainer}>
-        <Text style={styles.statsTitle}>📊 Minhas Estatísticas</Text>
-
+        <Text style={styles.statsTitle}>📊 Estatísticas</Text>
         {loading ? (
-          <ActivityIndicator size="small" color="#6200ee" style={{ marginVertical: 10 }} />
+          <ActivityIndicator size="small" color="#00d4ff" />
         ) : (
           <View style={styles.statsRow}>
             <Text style={styles.stat}>Livros: {stats.total}</Text>
@@ -110,7 +104,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#0f0f1a",
     flexGrow: 1,
   },
   title: {
@@ -118,11 +112,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
     textAlign: "center",
-    color: "#333",
+    color: "#ffffff",
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    color: "#b0b0ff",
     marginBottom: 20,
     textAlign: "center",
   },
@@ -133,40 +127,34 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#1a1a2e",
     marginHorizontal: 5,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: "#4a4a8a",
   },
   cardText: {
     marginTop: 10,
     fontSize: 14,
     fontWeight: "500",
-    color: "#333",
+    color: "#ffffff",
     textAlign: "center",
   },
   statsContainer: {
-    backgroundColor: "#fff",
+    backgroundColor: "#1a1a2e",
     padding: 20,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#4a4a8a",
   },
   statsTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333",
+    color: "#ffffff",
     textAlign: "center",
   },
   statsRow: {
@@ -176,6 +164,6 @@ const styles = StyleSheet.create({
   stat: {
     fontSize: 16,
     fontWeight: "500",
-    color: "#333",
+    color: "#00d4ff",
   },
 });
